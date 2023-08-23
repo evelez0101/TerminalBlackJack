@@ -13,10 +13,10 @@ public class Card
     {
         switch(s)
         {
-            case 0: return '♠';
-            case 1: return '♥';
-            case 2: return '♣';
-            case 3: return '♦';
+            case 1: return '♠';
+            case 2: return '♥';
+            case 3: return '♣';
+            case 4: return '♦';
             default: return ' ';        
         }
     }
@@ -49,13 +49,13 @@ public class Card
         StringBuilder sb = new StringBuilder();
         
         sb.append("┌─────────┐");
-        sb.append("\n│" + Value + "       │");
+        sb.append("\n│" + Value + "        │");
         sb.append("\n│         │");
         sb.append("\n│         │");
-        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│    "+ Suite + "    │");
         sb.append("\n│         │");
         sb.append("\n│         │");
-        sb.append("\n│       " +  Value + "│"); 
+        sb.append("\n│        " +  Value + "│"); 
         sb.append("\n└─────────┘"); 
 
         return sb.toString();
@@ -68,13 +68,13 @@ public class Card
         StringBuilder sb = new StringBuilder();
         
         sb.append("┌─────────┐");
-        sb.append("\n│" + face + "       │");
+        sb.append("\n│" + face + "        │");
         sb.append("\n│         │");
         sb.append("\n│         │");
-        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│    "+ Suite + "    │");
         sb.append("\n│         │");
         sb.append("\n│         │");
-        sb.append("\n│       " +  face + "│"); 
+        sb.append("\n│        " +  face + "│"); 
         sb.append("\n└─────────┘"); 
 
         return sb.toString();
@@ -89,7 +89,7 @@ public class Card
         sb.append("\n│" + num + "       │");
         sb.append("\n│         │");
         sb.append("\n│         │");
-        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│    "+ Suite + "    │");
         sb.append("\n│         │");
         sb.append("\n│         │");
         sb.append("\n│       " +  num + "│"); 
