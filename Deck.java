@@ -5,8 +5,7 @@ import java.util.Random;
 public class Deck 
 {
     private ArrayList<Card> Deck;
-    private Stack<Card> GameDeck;
-    private int top;
+    private Stack<Card> GameDeck = new Stack<Card>();
     
     public Deck()
     {
@@ -20,6 +19,9 @@ public class Deck
         {
             System.out.println(c);
         }
+
+         // Checking the Game Pile is populated
+        System.out.println("\nSize of Game Card Stack: " + GameDeck.size());
     }
 
     private void putintoStack()
