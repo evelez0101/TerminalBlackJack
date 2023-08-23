@@ -21,6 +21,18 @@ public class Card
         }
     }
 
+    private char faceCardAssigner()
+    {
+        switch(Value)
+        {
+            case 1: return 'A';
+            case 11: return 'J';
+            case 12: return 'Q';
+            case 13: return 'K';
+            default: return 'X';        
+        }
+    }
+
     public int getValue()
     {
         return this.Value;
@@ -31,26 +43,77 @@ public class Card
         return this.Suite;
     }
 
-    public String toString()
+    // For all other cards
+    private String cardBuilder()
     {
-        String [] pieces ={ "┌─────────┐", 
-                            "│" + Value + "........│" , 
-                            "│.........│" , 
-                            "│...."+ Suite + "....│", 
-                            "│.........│", 
-                            "│.........│", 
-                            "│.........│", 
-                            "│........" +  Value + "│", 
-                            "└─────────┘" }; 
+        StringBuilder sb = new StringBuilder();
         
-        for (String x: pieces)
-        {
-            System.out.println(x);
-        }
+        sb.append("┌─────────┐");
+        sb.append("\n│" + Value + "       │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("\n│       " +  Value + "│"); 
+        sb.append("\n└─────────┘"); 
 
-        return "";
+        return sb.toString();
     }
 
-    // Potentially Draw out the Cards in the terminal 
-    // TODO
+
+    // Face Cards and Special Cards
+    private String cardBuilder(char face)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("┌─────────┐");
+        sb.append("\n│" + face + "       │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("\n│       " +  face + "│"); 
+        sb.append("\n└─────────┘"); 
+
+        return sb.toString();
+    }
+
+    // For 10 card
+    private String cardBuilder(int num)
+    {
+        StringBuilder sb = new StringBuilder();
+        
+        sb.append("┌─────────┐");
+        sb.append("\n│" + num + "       │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("│    "+ Suite + "    │");
+        sb.append("\n│         │");
+        sb.append("\n│         │");
+        sb.append("\n│       " +  num + "│"); 
+        sb.append("\n└─────────┘"); 
+
+        return sb.toString();
+    }
+
+
+    public String toString()
+    {
+        // Face Cards or Special Cards
+        if (Value == 1 || Value == 11 || Value == 12 || Value == 13)
+        {
+            return cardBuilder(faceCardAssigner());
+        }
+        // Formatting Issues with 10
+        else if (Value == 10)
+        {
+            return cardBuilder(10);
+        }
+        
+        // All Other Cards
+        return cardBuilder();
+    }
+
 }
