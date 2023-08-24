@@ -5,7 +5,7 @@ import java.util.Random;
 public class Deck 
 {
     private ArrayList<Card> Deck;
-    private Stack<Card> GameDeck = new Stack<Card>();
+    private Stack<Card> GameDeck;
     
     public Deck()
     {
@@ -13,15 +13,16 @@ public class Deck
         createCards();
         shuffle();
         putintoStack();
-        
+        //displayDeck();
+    }
+
+    private void displayDeck()
+    {
         // For debugging
         for(Card c: Deck)
         {
             System.out.println(c);
         }
-
-         // Checking the Game Pile is populated
-        System.out.println("\nSize of Game Card Stack: " + GameDeck.size());
     }
 
     private void putintoStack()
@@ -70,6 +71,7 @@ public class Deck
         shuffle();
         putintoStack();
     }
+    
     public Card drawCard()
     {
         Card c;
