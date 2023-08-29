@@ -9,6 +9,7 @@ public class Card
         this.Suite = suiteAssigner(suite);
     }
 
+    // Assigns Suite ASCII character
     private char suiteAssigner(int s)
     {
         switch(s)
@@ -21,6 +22,7 @@ public class Card
         }
     }
 
+    // Assigns Special characters to card
     private char faceCardAssigner()
     {
         switch(Value)
@@ -96,6 +98,60 @@ public class Card
         sb.append("\n└─────────┘"); 
 
         return sb.toString();
+    }
+
+    public String [] cardCreate()
+    {
+        // Pieces of the Card used for line by line display
+        String [] card = new String [9];
+
+        // Top Portion
+        card[0] = "┌─────────┐";
+        
+        // Special Formatting for 10 
+        if (Value == 10) 
+        {
+            card[1] = "│" + 10 + "       │";
+        }
+        // Special Formatting for Face Cards and Ace
+        else if (Value > 10 || Value == 1)
+        {
+            card[1] = "│" + faceCardAssigner() + "        │";
+        }
+        // All other Cards
+        else
+        {
+            card[1] = "│" + Value + "        │";
+        }
+
+        // Middle Portion of the Card
+        card[2] = "│         │";
+        card[3] = "│         │";
+        card[4] = "│    "+ Suite + "    │";
+        card[5] = "│         │";
+        card[6] = "│         │";
+    
+        // Bottom Portion
+
+        // Special Formatting for 10 
+        if (Value == 10) 
+        {
+            card[7] = "│       " +  10 + "│";
+        }
+        // Special Formatting for Face Cards and Ace
+        else if (Value > 10 || Value == 1)
+        {
+            card[7] = "│        " +  faceCardAssigner() + "│";
+        }
+        // All other Cards
+        else
+        {
+            card[7] = "│        " +  Value + "│";
+        }
+
+        card[8] = "└─────────┘";
+
+        return card;
     }
 
 
