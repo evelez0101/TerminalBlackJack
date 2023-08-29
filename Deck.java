@@ -4,12 +4,15 @@ import java.util.Random;
 
 public class Deck 
 {
+    // Internal Deck
     private ArrayList<Card> Deck;
+    // Deck Used in Game
     private Stack<Card> GameDeck;
     
     public Deck()
     {
         Deck = new ArrayList<Card>();
+        GameDeck = new Stack<Card>();
         createCards();
         shuffle();
         putintoStack();
