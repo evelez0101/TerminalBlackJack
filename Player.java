@@ -25,12 +25,12 @@ public class Player
         if (scores[0] == scores[1])
         {
             // If the values are equal
-            System.out.println("\t\tCurrent Value: " + scores[0]);
+            System.out.println("\t\t\tCurrent Value: " + scores[0]);
         }
         else
         {
             // If the values are different
-            System.out.println("\t\tCurrent Values: " + scores[0] + " or " + scores[1]);
+            System.out.println("\t\t\tCurrent Values: " + scores[0] + " or " + scores[1]);
         }
     }
 
@@ -40,12 +40,7 @@ public class Player
         int [] scores = handValue();
 
         // Need come back and fix this to consider edge cases
-        if (scores[0] > 21 || scores[1] > 21 )
-        {
-            return true;
-        }
-
-        return false;   
+        return (scores[0] > 21 && scores[1] > 21) ;
     }
 
 
@@ -82,7 +77,7 @@ public class Player
                 && (hand.get(0).getValue() == 1 || hand.get(1).getValue() == 1);
     }
 
-    private int [] handValue()
+    public int [] handValue()
     {
         // Calculates two sums in case of an ace
         int val1 = 0; 
