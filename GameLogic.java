@@ -16,7 +16,6 @@ public class GameLogic
         Round();
     }   
     
-
     public void displayGame()
     {  
         displayLine();
