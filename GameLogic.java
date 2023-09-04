@@ -16,6 +16,7 @@ public class GameLogic
         Round();
     }   
     
+
     public void displayGame()
     {  
         displayLine();
@@ -66,8 +67,10 @@ public class GameLogic
         }
         else
         {
+            // Workout what to do, currently it exits the game
             System.out.println("\t\t\t== Black Jack ==");
-            return;
+            calculateWinner();
+            playAgain();
         }
         
         // Dealer Moves
@@ -79,21 +82,68 @@ public class GameLogic
         displayGame();
 
         calculateWinner();
+
+        playAgain();
     }
 
+    private void playAgain()
+    {
+        displayLine();
+        System.out.println("\n\tWould You like to play again?");
+
+        System.out.println("\n\tSelect One of the following Options");
+        System.out.println("\t\t 1.) Another Round");
+        System.out.println("\t\t 2.) Leave Table");
+
+        // Reply from user
+        int reply;
+
+        reply = scan.nextInt();
+
+        // Decide if player wants to play another round 
+        if (reply == 1)
+        {
+            // Clear player and house hands and then start another round
+            player.clearHand();
+            house.clearHand();
+
+            // Reshuffle deck when there are only 20 cards left 
+            if (GameDeck.getGameDeckSize() <= 40)
+            {
+                GameDeck.refillgameDeck();
+                displayLine();
+                System.out.println("\t\tThe Deck has been reshuffled");
+                displayLine();
+            }
+
+            Round();
+        }  
+        else if (reply == 2)
+        {
+            displayLine();
+            System.out.println("\t\t\tThanks for playing!");
+            displayLine();
+        } 
+        else
+        {
+            System.out.println ("\t\tInvalid input");
+            playAgain();
+        }
+
+        
+
+    }
     private void playerMove()
     {
         //Player Hit
         int reply;
        
-        
         // Resets the reply with each iteration 
         reply = -1;
 
-        System.out.println("\n\t\tSelect One of the following Options");
+        System.out.println("\n\t\tSelect One of the following Options (1 or 2)");
         System.out.println("\t\t 1.) Hit");
         System.out.println("\t\t 2.) Stand");
-            
         // Error handling 
         try
         {
@@ -123,7 +173,7 @@ public class GameLogic
          // Player Stand 
         else if (reply == 2)
         {
-        return;
+            return;
         }
         else
         {
@@ -184,11 +234,11 @@ public class GameLogic
         int playerBest = ( (playerHand[1] > playerHand[0]) && (playerHand[1] <= 21) ) ? playerHand[1] : playerHand[0];
 
     
-        if ( (playerBest <= 21) && (playerBest > houseBest))
+        if ( ( (playerBest <= 21) && (playerBest > houseBest) ) || (houseBest > 21) )
         {
             System.out.println("\t\t\tPlayer Wins");
         }
-        else if ( (houseBest <= 21) && (playerBest < houseBest))
+        else if ( ( (houseBest <= 21) && (playerBest < houseBest) ) || (playerBest > 21) )
         {
             System.out.println("\t\t\tHouse Wins");
         }
@@ -197,4 +247,6 @@ public class GameLogic
             System.out.println("\t\t\tDraw!");
         }
     }
+
+
 }
