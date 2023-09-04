@@ -16,6 +16,11 @@ public class Player
         hand.add(c);
     }
 
+    public void clearHand()
+    {
+        // Clears player hand
+        hand.clear();
+    }
     // Calculates two potential Sums in case of Ace
     public void displayScore()
     {
