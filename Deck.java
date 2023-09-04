@@ -19,6 +19,11 @@ public class Deck
         //displayDeck();
     }
 
+    public int getGameDeckSize()
+    {
+        return this.GameDeck.size();
+    }
+
     private void displayDeck()
     {
         // For debugging
@@ -30,19 +35,24 @@ public class Deck
 
     private void putintoStack()
     {
+        // Make Sure stack is empty and then refill it
+        GameDeck.clear();
+        System.out.println(GameDeck.size());
+
+        // Repopulates the deck 
         for(Card c: Deck)
         {
             GameDeck.add(c);
         }
+
+        System.out.println(GameDeck.size());
     }    
     
-
     private void shuffle()
     {   
         Random rand = new Random();
         
         // Fisher Yates Shuffle Algorithm 
-
         for(int i = Deck.size() - 1; i >= 0;i--)
         {
             swap(i, rand.nextInt(i + 1));
@@ -69,7 +79,8 @@ public class Deck
         }
     }
 
-    private void refillgameDeck()
+    // Reshuffles and refills usable cards
+    public void refillgameDeck()
     {
         shuffle();
         putintoStack();
