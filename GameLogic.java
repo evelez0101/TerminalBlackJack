@@ -27,7 +27,7 @@ public class GameLogic
         house.displayScore();
 
         // Player Hand
-        System.out.println("\n\t\t\t\t== Your Hand ==");
+        System.out.println("\n\t\t\t\t== Your Hand ==\t\tCurrent Bet: $" + player.getBet());
         player.displayHand();
         player.displayScore();
         displayLine();
@@ -50,13 +50,26 @@ public class GameLogic
             System.out.println(x);
         }
 
-       System.out.println("\n\t\tBy: Evelio Velez\tVersion: 0.8.1");                                                                                                                
+       System.out.println("\n\t\tBy: Evelio Velez\tVersion: 0.8.1");   
+       displayLine();
+       
+       buyInScreen();
     }
 
 
     private void buyInScreen()
     {
 
+        System.out.println("\n\tHow Much Would you like to Buy-In for?");
+        System.out.println("\t(Note: Table Minimum is $10)");
+
+        System.out.print("\n\tBuy-in Amount (Enter Whole $ amounts only): ");
+        
+        int buyIn = scan.nextInt();
+        
+        player.deposit(buyIn);
+
+        System.out.println("\n\tYou have bought in for $" + buyIn + "\n\n\t\t\tGood Luck!");
     }
 
     private void displayLine() 
@@ -64,16 +77,56 @@ public class GameLogic
         System.out.println("-------------------------------------------------------------------------");
     }
 
+    private void payThePlayer()
+    {
+
+        int[] houseHand = house.handValue();
+        int[] playerHand = player.handValue();
+
+        // Assigns the highest of the two values that is below 21
+        int houseBest = ((houseHand[1] > houseHand[0]) && (houseHand[1] <= 21)) ? houseHand[1] : houseHand[0];
+        int playerBest = ((playerHand[1] > playerHand[0]) && (playerHand[1] <= 21)) ? playerHand[1] : playerHand[0];
+
+
+        // Push or get Money Back
+        if (playerBest == houseBest)
+        {
+            player.deposit(player.getBet());
+            System.out.println("\tYou Won: $" + player.getBet());
+        }
+        // Black Jack Pays 3 to 2
+        else if (playerBest == 21 && player.hasBlackjack())
+        {
+            double threeToTwo = player.getBet() * (1.5);
+            player.deposit((int)threeToTwo);
+            System.out.println("\tYou Won: $" + (int)threeToTwo);
+        }
+        // Regular 2 to 1 win
+        else
+        {
+            player.deposit(player.getBet() * 2);
+            System.out.println("\tYou Won: $" + player.getBet() * 2);
+        }
+    }
+
     public void Round() {
+        
         // Place Bets
-        System.out.print("\tPlace a bet: ");
+        displayLine();
+
+        System.out.print("\tPlace a bet (Whole $ amounts only): ");
 
         // Error checkt this later
         int reply = scan.nextInt();
 
         // Handle Betting System
-        // TODO
+        if (player.canBet(reply))
+        {
+            player.withdrawl(reply);
+            player.setBet(reply);
+        }
 
+        // Card Deal
 
         // Dealer Deals 2 cards to each player including the house
         for (int i = 0; i < 2; i++) {
@@ -83,14 +136,12 @@ public class GameLogic
             player.addCardtoHand(GameDeck.drawCard());
 
             // House
-            //house.addCardtoHand(GameDeck.drawCard());
+            house.addCardtoHand(GameDeck.drawCard());
         }
 
         // Debug 
-        house.addCardtoHand(new Card(1,1));
-        house.addCardtoHand(new Card(10,1));
-
-
+        // house.addCardtoHand(new Card(1,1));
+        // house.addCardtoHand(new Card(10,1));
 
         displayGame();
 
@@ -131,7 +182,12 @@ public class GameLogic
         {
             // Workout what to do, currently it exits the game
             System.out.println("\t\t\t== Black Jack ==");
+
             calculateWinner();
+
+            // Pay the Player
+            payThePlayer();
+
             playAgain();
         }
 
@@ -158,6 +214,7 @@ public class GameLogic
     {
         // Displays to user a choice to make
         displayLine();
+        System.out.println("\n\tCurrent Bankroll: $" + player.getBankroll());
         System.out.println("\n\tWould You like to play again?");
 
         System.out.println("\n\tSelect One of the following Options");
@@ -320,6 +377,7 @@ public class GameLogic
         // Pickes the winner, who is closer to 21 without going over 
         if (((playerBest <= 21) && (playerBest > houseBest)) || (houseBest > 21)) {
             System.out.println("\t\t\tPlayer Wins");
+            payThePlayer();
         } 
         else if (((houseBest <= 21) && (playerBest < houseBest)) || (playerBest > 21)) {
             System.out.println("\t\t\tHouse Wins");
@@ -327,6 +385,7 @@ public class GameLogic
         else 
         {
             System.out.println("\t\t\tDraw!");
+            payThePlayer();
         }
     }
 }
