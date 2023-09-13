@@ -122,9 +122,9 @@ public class GameLogic
         // Black Jack Pays 3 to 2
         else if (playerBest == 21 && player.hasBlackjack())
         {
-            double threeToTwo = player.getBet() * (1.5);
-            player.deposit((int)threeToTwo);
-            System.out.println("\tYou Won: $" + (int)threeToTwo);
+            double threeToTwo = (player.getBet() * (1.5));
+            player.deposit((int)threeToTwo + player.getBet());
+            System.out.println("\tYou Won: $" + ((int)threeToTwo + player.getBet()));
         }
         // Regular 2 to 1 win
         else
@@ -176,14 +176,16 @@ public class GameLogic
         {
             reply = getUserReply("\tPlace a bet (Whole $ amounts only): ");
 
-            // Handle Betting System
-            if (player.canBet(reply))
-            {
-                player.withdrawl(reply);
-                player.setBet(reply);
-            }
         }
         while(reply <= 0 || !player.canBet(reply));
+
+        // Handle Betting System
+        if (player.canBet(reply))
+        {
+            player.withdrawl(reply);
+            player.setBet(reply);
+        }
+
         // Card Deal
 
         // Dealer Deals 2 cards to each player including the house
@@ -191,15 +193,15 @@ public class GameLogic
             // Player Card
             // Could potentially add a player list of somekind to hand multiple people at
             // table
-            player.addCardtoHand(GameDeck.drawCard());
+            //player.addCardtoHand(GameDeck.drawCard());
 
             // House
-            //house.addCardtoHand(GameDeck.drawCard());
+            house.addCardtoHand(GameDeck.drawCard());
         }
 
         // Debug (Dealer Black Jack)
-        house.addCardtoHand(new Card(1,1));
-        house.addCardtoHand(new Card(10,1));
+        player.addCardtoHand(new Card(1,1));
+        player.addCardtoHand(new Card(10,1));
 
         clearScreen();
 
@@ -254,10 +256,9 @@ public class GameLogic
 
             calculateWinner();
 
-            // Pay the Player
-            payThePlayer();
-
             playAgain();
+
+            return;
         }
 
         // Dealer Moves
