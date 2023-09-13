@@ -4,6 +4,9 @@ public class Player {
     // Card Hand
     private ArrayList<Card> hand;
 
+    // Insurance
+    private boolean hasInsuarnce;
+
     // Bankroll
     private int Bankroll;
 
@@ -17,6 +20,7 @@ public class Player {
         hand = new ArrayList<Card>();
         Bankroll = 0;
         bet = 0;
+        hasInsuarnce = false;
     }
 
     public Player(boolean hide) {
@@ -29,6 +33,16 @@ public class Player {
         hand.add(c);
     }
 
+    public boolean hasInsuarnce()
+    {
+        return this.hasInsuarnce;
+    }
+
+    public void setInsureBet(boolean b)
+    {
+        this.hasInsuarnce = b; 
+    }
+    
     public int getBankroll()
     {
         return this.Bankroll;
