@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class GameLogic 
@@ -17,9 +18,19 @@ public class GameLogic
         Round();
     }
 
+
+    private void clearScreen()
+    {
+        // Clear Screan
+        System.out.print("\033[H\033[2J");  
+        System.out.flush();  
+    }
+
     public void displayGame() 
     {
-        
+        // Clear Screan
+        clearScreen(); 
+      
         // Dealer Hand
         displayLine();
         System.out.println("\n\t\t\t\t== Dealer Hand == ");
@@ -50,7 +61,9 @@ public class GameLogic
             System.out.println(x);
         }
 
-       System.out.println("\n\t\tBy: Evelio Velez\tVersion: 0.8.1");   
+        // Version Number 
+       System.out.println("\n\t\tBy: Evelio Velez\tVersion: 0.9.0");   
+       
        displayLine();
        
        buyInScreen();
@@ -59,17 +72,23 @@ public class GameLogic
 
     private void buyInScreen()
     {
-
+        // Playe Choice
         System.out.println("\n\tHow Much Would you like to Buy-In for?");
-        System.out.println("\t(Note: Table Minimum is $10)");
+        System.out.println("\t(Note: Table Minimum is $1)");
 
-        System.out.print("\n\tBuy-in Amount (Enter Whole $ amounts only): ");
-        
-        int buyIn = scan.nextInt();
-        
+        int buyIn;
+
+        do
+        {
+            buyIn = getUserReply("\n\tBuy-in Amount (Enter Whole $ amounts only): "); 
+        }
+        while(buyIn <= 0);
+
         player.deposit(buyIn);
 
         System.out.println("\n\tYou have bought in for $" + buyIn + "\n\n\t\t\tGood Luck!");
+
+        clearScreen();
     }
 
     private void displayLine() 
@@ -88,8 +107,14 @@ public class GameLogic
         int playerBest = ((playerHand[1] > playerHand[0]) && (playerHand[1] <= 21)) ? playerHand[1] : playerHand[0];
 
 
+        // Insured Bet
+        if (house.hasBlackjack() && player.hasInsuarnce())
+        {
+            player.deposit(player.getBet() * 2);
+            System.out.println("\tYou Won: $" + player.getBet() * 2);
+        }
         // Push or get Money Back
-        if (playerBest == houseBest)
+        else if (playerBest == houseBest)
         {
             player.deposit(player.getBet());
             System.out.println("\tYou Won: $" + player.getBet());
@@ -107,25 +132,58 @@ public class GameLogic
             player.deposit(player.getBet() * 2);
             System.out.println("\tYou Won: $" + player.getBet() * 2);
         }
+
     }
 
-    public void Round() {
+
+    private int getUserReply(String message)
+    {
+        int reply; 
         
-        // Place Bets
+        // Error Handling
+        do
+        {
+            System.out.print(message);
+
+            try
+            {
+                reply = scan.nextInt();
+            }
+            catch (InputMismatchException e)
+            {
+                System.out.println("\t\tPlease Enter a Numerical Value");
+                reply = -1;
+            }
+
+            scan.nextLine(); // clears the buffer
+        }
+        while(reply <= 0);
+
+        return reply;
+    }
+
+    public void Round() 
+    {
+        // Screen Formatting
+        clearScreen();
+
         displayLine();
 
-        System.out.print("\tPlace a bet (Whole $ amounts only): ");
+        // Place Bet
 
-        // Error checkt this later
-        int reply = scan.nextInt();
-
-        // Handle Betting System
-        if (player.canBet(reply))
+        int reply;
+        do
         {
-            player.withdrawl(reply);
-            player.setBet(reply);
-        }
+            reply = getUserReply("\tPlace a bet (Whole $ amounts only): ");
 
+            // Handle Betting System
+            if (player.canBet(reply))
+            {
+                player.withdrawl(reply);
+                player.setBet(reply);
+            }
+        }
+        while(reply <= 0 || !player.canBet(reply));
         // Card Deal
 
         // Dealer Deals 2 cards to each player including the house
@@ -136,12 +194,14 @@ public class GameLogic
             player.addCardtoHand(GameDeck.drawCard());
 
             // House
-            house.addCardtoHand(GameDeck.drawCard());
+            //house.addCardtoHand(GameDeck.drawCard());
         }
 
-        // Debug 
-        // house.addCardtoHand(new Card(1,1));
-        // house.addCardtoHand(new Card(10,1));
+        // Debug (Dealer Black Jack)
+        house.addCardtoHand(new Card(1,1));
+        house.addCardtoHand(new Card(10,1));
+
+        clearScreen();
 
         displayGame();
 
@@ -150,17 +210,25 @@ public class GameLogic
         
         if (houseHandValue[1] == 11)
         {
-            System.out.println("\tWould You like Insurance?");
-            System.out.println("\t\t 1.) Yes");
-            System.out.println("\t\t 2.) No");
-
-            int r = scan.nextInt();
-
-            // Error handle later
-            switch(r)
+        
+            int r;
+            
+            // Error Handling
+            do
             {
-                case 1: System.out.println("\t\t\tBet Insured"); break;
-                case 2: System.out.println("\t\t\tNo bet Insured"); break;
+                r = getUserReply("\tWould You like Insurance?" + "\n\t\t 1.) Yes" + "\n\t\t 2.) No \n");
+            } 
+            while(r < 0 || r > 2);
+           
+            // Insure Bet
+            if (r == 1 && player.canBet(player.getBet() / 2))
+            {
+                player.setBet(player.getBet() / 2);
+                player.setInsureBet(true);
+            }
+            else
+            {
+                player.setInsureBet(false);
             }
 
             // House has Black Jack
@@ -169,6 +237,7 @@ public class GameLogic
                 house.setHideCard(false);
                 displayGame();
                 System.out.println("\t\t\t== House has Black Jack ==");
+                payThePlayer();
                 playAgain();
             }
         }
@@ -213,26 +282,34 @@ public class GameLogic
     private void playAgain() 
     {
         // Displays to user a choice to make
+        if (player.getBankroll() == 0)
+        {
+            System.out.println("\tYou have run out of funds!");
+            return;
+        }
+
         displayLine();
         System.out.println("\n\tCurrent Bankroll: $" + player.getBankroll());
         System.out.println("\n\tWould You like to play again?");
 
+        
         System.out.println("\n\tSelect One of the following Options");
         System.out.println("\t\t 1.) Another Round");
         System.out.println("\t\t 2.) Leave Table");
 
         // Reply from user
-        int reply;
-
-        reply = scan.nextInt();
+        int reply = getUserReply("");
 
         // Decide if player wants to play another round
         if (reply == 1) 
         {
-            // Clear player, house hands, hides dealer hand, and then starts another round
+            // Clear player, clears player insurance status,
+            // house hands, hides dealer hand, and then starts another round
             house.setHideCard(true);
             player.clearHand();
             house.clearHand();
+            player.setInsureBet(false);
+            player.setBet(0);
 
             // Reshuffle deck when there are only 20 cards left
             if (GameDeck.getGameDeckSize() <= 40) 
@@ -263,10 +340,7 @@ public class GameLogic
     private void playerMove() 
     {
         // Player Hit
-        int reply;
-
-        // Resets the reply with each iteration
-        reply = -1;
+   
 
         // Displays Choices to User
         System.out.println("\n\t\tSelect One of the following Options (1 or 2)");
@@ -274,14 +348,7 @@ public class GameLogic
         System.out.println("\t\t 2.) Stand");
         
         // Error handling
-        try 
-        {
-            reply = scan.nextInt();
-        } 
-        catch (Exception e) 
-        {
-            System.out.println("Please enter a numeric value");
-        }
+        int reply = getUserReply("");
 
         // Player Hit
         if (reply == 1) 
