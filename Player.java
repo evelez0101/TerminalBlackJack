@@ -252,6 +252,7 @@ public class Player
                     break;
             }
 
+            // Helps handle logic for the dealer hiding their cards
             index++;
         }
 
