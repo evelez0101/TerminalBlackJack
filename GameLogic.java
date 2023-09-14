@@ -3,11 +3,19 @@ import java.util.Scanner;
 
 public class GameLogic 
 {
+    // Dealer
     private Player house;
+
+    // Player
     private Player player;
+
+    // Deck of Cards in use
     private Deck GameDeck;
+
+    // Scanner for user input
     private Scanner scan;
 
+    // Construction to begin gameflow
     public GameLogic() 
     {
         player = new Player();
@@ -18,7 +26,7 @@ public class GameLogic
         Round();
     }
 
-
+    // Clears the Terminal screen to avoid clutter
     private void clearScreen()
     {
         // Clear Screan
@@ -26,6 +34,7 @@ public class GameLogic
         System.out.flush();  
     }
 
+    // Displays Scores, current bet, and hand for player and dealer
     public void displayGame() 
     {
         // Clear Screan
@@ -44,6 +53,7 @@ public class GameLogic
         displayLine();
     }
 
+    // Welcome Screen for the program is first run
     private void welcomeScreen()
     {
         displayLine();
@@ -69,36 +79,39 @@ public class GameLogic
        buyInScreen();
     }
 
-
+    // Players can "Buy in" so they can play at the table
     private void buyInScreen()
     {
         // Playe Choice
         System.out.println("\n\tHow Much Would you like to Buy-In for?");
         System.out.println("\t(Note: Table Minimum is $1)");
 
+        // Error Handles user misinput
         int buyIn;
 
+        // Do until player gives a valid answer
         do
         {
             buyIn = getUserReply("\n\tBuy-in Amount (Enter Whole $ amounts only): "); 
         }
         while(buyIn <= 0);
 
+        // Despoite Buy in amount
         player.deposit(buyIn);
-
-        System.out.println("\n\tYou have bought in for $" + buyIn + "\n\n\t\t\tGood Luck!");
 
         clearScreen();
     }
 
+     // Displays Line for styling
     private void displayLine() 
     {
         System.out.println("-------------------------------------------------------------------------");
     }
 
+    // Handles Paying the player after a win
     private void payThePlayer()
     {
-
+        // Player scores
         int[] houseHand = house.handValue();
         int[] playerHand = player.handValue();
 
@@ -107,11 +120,11 @@ public class GameLogic
         int playerBest = ((playerHand[1] > playerHand[0]) && (playerHand[1] <= 21)) ? playerHand[1] : playerHand[0];
 
 
-        // Insured Bet
+        // Insured Bet Payout
         if (house.hasBlackjack() && player.hasInsuarnce())
         {
-            player.deposit(player.getBet() * 2);
-            System.out.println("\tYou Won: $" + player.getBet() * 2);
+            player.deposit(player.getInsuranceBet() * 2);
+            System.out.println("\tYou Won: $" + player.getInsuranceBet() * 2);
         }
         // Push or get Money Back
         else if (playerBest == houseBest)
@@ -119,7 +132,7 @@ public class GameLogic
             player.deposit(player.getBet());
             System.out.println("\tYou Won: $" + player.getBet());
         }
-        // Black Jack Pays 3 to 2
+        // Black Jack Pays 3 to 2 + original amount
         else if (playerBest == 21 && player.hasBlackjack())
         {
             double threeToTwo = (player.getBet() * (1.5));
@@ -135,7 +148,7 @@ public class GameLogic
 
     }
 
-
+    // Method to hand user input handling 
     private int getUserReply(String message)
     {
         int reply; 
@@ -159,9 +172,11 @@ public class GameLogic
         }
         while(reply <= 0);
 
+        // Returns a valid reply 
         return reply;
     }
 
+    // One round of Game Flow
     public void Round() 
     {
         // Screen Formatting
@@ -170,14 +185,13 @@ public class GameLogic
         displayLine();
 
         // Place Bet
-
         int reply;
         do
         {
             reply = getUserReply("\tPlace a bet (Whole $ amounts only): ");
 
         }
-        while(reply <= 0 || !player.canBet(reply));
+        while(!player.canBet(reply));
 
         // Handle Betting System
         if (player.canBet(reply))
@@ -186,47 +200,46 @@ public class GameLogic
             player.setBet(reply);
         }
 
-        // Card Deal
-
-        // Dealer Deals 2 cards to each player including the house
+        // Deal Cards (2 per player including the house)
         for (int i = 0; i < 2; i++) {
             // Player Card
-            // Could potentially add a player list of somekind to hand multiple people at
-            // table
-            //player.addCardtoHand(GameDeck.drawCard());
+            player.addCardtoHand(GameDeck.drawCard());
 
             // House
             house.addCardtoHand(GameDeck.drawCard());
         }
 
         // Debug (Dealer Black Jack)
-        player.addCardtoHand(new Card(1,1));
-        player.addCardtoHand(new Card(10,1));
+        //player.addCardtoHand(new Card(1,1));
+        //player.addCardtoHand(new Card(10,1));
 
+        // Fresh Screen for Game to begin
         clearScreen();
 
         displayGame();
 
-        // Insurance
+        // Insurance 
         int [] houseHandValue = house.handValue();
         
+        // If the first card showing is an ace, the player can insure their bet 
         if (houseHandValue[1] == 11)
         {
-        
-            int r;
+            int reponse;
             
             // Error Handling
             do
             {
-                r = getUserReply("\tWould You like Insurance?" + "\n\t\t 1.) Yes" + "\n\t\t 2.) No \n");
+                reponse = getUserReply("\tWould You like Insurance?" + "\n\t\t 1.) Yes" + "\n\t\t 2.) No \n");
             } 
-            while(r < 0 || r > 2);
+            while(reponse > 2);
            
             // Insure Bet
-            if (r == 1 && player.canBet(player.getBet() / 2))
+            if (reponse == 1 && player.canBet(player.getBet() / 2))
             {
-                player.setBet(player.getBet() / 2);
+                // Takes a rounded up 1/2 of initial bet
+                player.setInsuranceBet((int)Math.ceil(player.getBet() / 2.0));
                 player.setInsureBet(true);
+                System.out.println("\t\tYour Bet is Insured!");
             }
             else
             {
@@ -290,10 +303,10 @@ public class GameLogic
         }
 
         displayLine();
+
+        // Player Choice is diaplayed
         System.out.println("\n\tCurrent Bankroll: $" + player.getBankroll());
         System.out.println("\n\tWould You like to play again?");
-
-        
         System.out.println("\n\tSelect One of the following Options");
         System.out.println("\t\t 1.) Another Round");
         System.out.println("\t\t 2.) Leave Table");
@@ -311,6 +324,7 @@ public class GameLogic
             house.clearHand();
             player.setInsureBet(false);
             player.setBet(0);
+            player.setInsuranceBet(0);
 
             // Reshuffle deck when there are only 20 cards left
             if (GameDeck.getGameDeckSize() <= 40) 
@@ -341,7 +355,6 @@ public class GameLogic
     private void playerMove() 
     {
         // Player Hit
-   
 
         // Displays Choices to User
         System.out.println("\n\t\tSelect One of the following Options (1 or 2)");
@@ -395,11 +408,11 @@ public class GameLogic
             return;
         }
 
-        // If Dealer does have aces
+        // If Dealer does not have aces
         if (value[0] == value[1]) 
         {
             // Dealer has to hit on anything less than 17
-            if (value[0] < 16) 
+            if (value[0] <= 16) 
             {
                 // Dealer Move
                 house.addCardtoHand(GameDeck.drawCard());
@@ -435,6 +448,7 @@ public class GameLogic
 
     public void calculateWinner() 
     {
+        // Hand Values of the Player and House
         int[] houseHand = house.handValue();
         int[] playerHand = player.handValue();
 
@@ -443,16 +457,18 @@ public class GameLogic
         int playerBest = ((playerHand[1] > playerHand[0]) && (playerHand[1] <= 21)) ? playerHand[1] : playerHand[0];
 
         // Pickes the winner, who is closer to 21 without going over 
-        if (((playerBest <= 21) && (playerBest > houseBest)) || (houseBest > 21)) {
+        if (((playerBest <= 21) && (playerBest > houseBest)) || (houseBest > 21)) 
+        {
             System.out.println("\t\t\tPlayer Wins");
             payThePlayer();
         } 
-        else if (((houseBest <= 21) && (playerBest < houseBest)) || (playerBest > 21)) {
-            System.out.println("\t\t\tHouse Wins");
+        else if (((houseBest <= 21) && (playerBest < houseBest)) || (playerBest > 21)) 
+        {
+            System.out.println("\t\t\t\t\tHouse Wins");
         } 
         else 
         {
-            System.out.println("\t\t\tDraw!");
+            System.out.println("\t\t\t\tDraw!");
             payThePlayer();
         }
     }
