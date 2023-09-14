@@ -14,6 +14,9 @@ public class Player
     // Current Bet for a round
     private int bet;
 
+    // Amount paid towards insurance
+    private int insuranceBet;
+
     // Hides Cards for dealers
     private boolean hiddenCard;
 
@@ -24,6 +27,7 @@ public class Player
         Bankroll = 0;
         bet = 0;
         hasInsuarnce = false;
+        insuranceBet = 0;
     }
 
     // Consturction for Dealer
@@ -35,6 +39,18 @@ public class Player
     // Adds Card to hand
     public void addCardtoHand(Card c) {
         hand.add(c);
+    }
+
+    // Allows change of insurance bet
+    public void setInsuranceBet(int amount)
+    {
+        this.insuranceBet = amount;
+    }
+
+    // Returns insurance bet
+    public int getInsuranceBet()
+    {
+        return this.insuranceBet;
     }
 
     // Returns whether or not player has insurance during current round 
@@ -104,26 +120,26 @@ public class Player
         // Two equal and scores below 22
         if ((scores[0] == scores[1]) && (scores[0] <= 21 && scores[1] <= 21)) 
         {
-            System.out.println("\t\tCurrent Value: " + scores[0]);
+            System.out.println("\t\t\tCurrent Value: " + scores[0]);
         } 
         // Two diffent scores below 22
         else if (scores[0] <= 21 && scores[1] <= 21) 
         {
-            System.out.println("\t\tCurrent Values: " + scores[0] + " or " + scores[1]);
+            System.out.println("\t\t\tCurrent Values: " + scores[0] + " or " + scores[1]);
         }
         // Two different scores and 1 is greater than 21 and the other isn't
         else if (scores[0] > 21 && scores[1] <= 21) 
         {
-            System.out.println("\t\tCurrent Value: " + scores[1]);
+            System.out.println("\t\t\tCurrent Value: " + scores[1]);
         } 
         else if (scores[1] > 21 && scores[0] <= 21) 
         {
-            System.out.println("\t\tCurrent Value: " + scores[0]);
+            System.out.println("\t\t\tCurrent Value: " + scores[0]);
         }
         // If both scores are over 21 then show the player has gone bust    
         else 
         {
-            System.out.println("\t\tBust");
+            System.out.println("\t\t\tBust");
         }
     }
 
