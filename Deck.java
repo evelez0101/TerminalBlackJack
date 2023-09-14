@@ -6,6 +6,7 @@ public class Deck
 {
     // Internal Deck
     private ArrayList<Card> Deck;
+    
     // Deck Used in Game
     private Stack<Card> GameDeck;
     
@@ -24,6 +25,7 @@ public class Deck
         return this.GameDeck.size();
     }
 
+    // Debug Purposes 
     private void displayDeck()
     {
         // For debugging
@@ -37,15 +39,12 @@ public class Deck
     {
         // Make Sure stack is empty and then refill it
         GameDeck.clear();
-        System.out.println(GameDeck.size());
 
         // Repopulates the deck 
         for(Card c: Deck)
         {
             GameDeck.add(c);
         }
-
-        System.out.println(GameDeck.size());
     }    
     
     private void shuffle()
