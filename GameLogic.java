@@ -238,6 +238,7 @@ public class GameLogic
             {
                 // Takes a rounded up 1/2 of initial bet
                 player.setInsuranceBet((int)Math.ceil(player.getBet() / 2.0));
+                player.withdrawl((int)Math.ceil(player.getBet() / 2.0));
                 player.setInsureBet(true);
                 System.out.println("\t\tYour Bet is Insured!");
             }
@@ -298,7 +299,8 @@ public class GameLogic
         // Displays to user a choice to make
         if (player.getBankroll() == 0)
         {
-            System.out.println("\tYou have run out of funds!");
+            displayLine();
+            System.out.println("\t\tYou have run out of funds!");
             return;
         }
 
