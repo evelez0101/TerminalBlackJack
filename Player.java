@@ -11,6 +11,8 @@ public class Player
     // Bankroll
     private int Bankroll;
 
+    private boolean canDoubleDown;
+
     // Current Bet for a round
     private int bet;
 
@@ -28,16 +30,29 @@ public class Player
         bet = 0;
         hasInsuarnce = false;
         insuranceBet = 0;
+        canDoubleDown = true;
     }
 
     // Consturction for Dealer
-    public Player(boolean hide) {
+    public Player(boolean hide) 
+    {
         hand = new ArrayList<Card>();
         hiddenCard = hide;
     }
 
+    public boolean canDoubleDown()
+    {
+        return this.canDoubleDown;
+    }
+
+    public void setDoubleDownStatus(boolean status)
+    {
+        this.canDoubleDown = status;
+    }
+
     // Adds Card to hand
-    public void addCardtoHand(Card c) {
+    public void addCardtoHand(Card c) 
+    {
         hand.add(c);
     }
 
