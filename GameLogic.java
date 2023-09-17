@@ -327,6 +327,7 @@ public class GameLogic
             player.setInsureBet(false);
             player.setBet(0);
             player.setInsuranceBet(0);
+            player.setDoubleDownStatus(true);
 
             // Reshuffle deck when there are only 20 cards left
             if (GameDeck.getGameDeckSize() <= 40) 
@@ -363,6 +364,12 @@ public class GameLogic
         System.out.println("\t\t 1.) Hit");
         System.out.println("\t\t 2.) Stand");
         
+        // Double Down only on first turn 
+        if (player.canDoubleDown() && player.canBet(player.getBet()))
+        {
+            System.out.println("\t\t 3.) Double Down");
+        }
+        
         // Error handling
         int reply = getUserReply("");
 
@@ -381,6 +388,8 @@ public class GameLogic
                 return;
             }
 
+            player.setDoubleDownStatus(false);
+
             // Repeats
             playerMove();
         }
@@ -390,11 +399,27 @@ public class GameLogic
             // Ends Turn
             return;
         } 
+        // Player Double Down 
+        else if(reply == 3 && (player.canDoubleDown() && player.canBet(player.getBet())) )
+        {
+            // Withdraw the doubled bet 
+            player.withdrawl(player.getBet());
+
+            // Set the new bet 
+            player.setBet(2 * player.getBet());
+            
+            // Add a card to hand
+            player.addCardtoHand(GameDeck.drawCard());
+            displayGame();
+        }
         else 
         {
             System.out.println("Please enter a valid response");
             playerMove();
         }
+
+        // Doesn't allow doubling down past first iteration or call
+        player.setDoubleDownStatus(false);
     }
 
     private void dealerMove() 
